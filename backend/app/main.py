@@ -26,3 +26,10 @@ app.include_router(predictions.router, prefix="/api/v1")
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+# To run this application from the command line:
+# If you are in the backend directory:
+# uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+#
+# If you are in the project root directory:
+# uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload

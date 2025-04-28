@@ -101,7 +101,7 @@ async def is_apolo(
     service: ApoloClassifierService = Depends(get_apolo_classifier_service)
 ):
     """
-    Determine if the image is of Apolo (the specific dog)
+    Determine if the image is of Apolo (my good boy)
     """
     try:
         start_time = time.time()

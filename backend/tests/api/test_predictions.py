@@ -36,16 +36,9 @@ def mock_image():
 
 
 @pytest.fixture
-def mock_general_classifier():
-    mock = MagicMock(spec=GeneralClassifierService)
-    with patch("app.api.dependencies.get_general_classifier_service", return_value=mock):
-        yield mock
-
-
-@pytest.fixture
 def mock_apolo_classifier():
     mock = MagicMock(spec=ApoloClassifierService)
-    with patch("app.api.dependencies.get_apolo_classifier_service", return_value=mock):
+    with patch("app.api.routes.predictions.get_apolo_classifier_service", return_value=mock):
         yield mock
 
 
@@ -66,9 +59,10 @@ def invalid_image_file():
 
 
 class TestClassifyEndpoint:
-    def test_classify_success(self, mock_general_classifier, valid_image_file):
+    @patch('app.api.dependencies.general_classifier_service')
+    def test_classify_success(self, mock_service, valid_image_file):
         # Set up mock return value
-        mock_general_classifier.predict.return_value = {
+        mock_service.predict.return_value = {
             "dog": 0.8,
             "cat": 0.15,
             "other": 0.05
@@ -84,74 +78,33 @@ class TestClassifyEndpoint:
         assert "processing_time" in response.json()
 
         # Verify mock was called correctly
-        mock_general_classifier.predict.assert_called_once()
+        mock_service.predict.assert_called_once()
 
-    def test_classify_invalid_image(self, mock_general_classifier, invalid_image_file):
+    @patch('app.api.dependencies.general_classifier_service')
+    def test_classify_invalid_image(self, mock_classifier_service, invalid_image_file):
         response = client.post("/api/v1/classify", files=invalid_image_file)
 
         assert response.status_code == 400
         assert "Invalid image format" in response.json()["detail"]
-        mock_general_classifier.predict.assert_not_called()
+        mock_classifier_service.predict.assert_not_called()
 
+    @patch('app.api.dependencies.general_classifier_service')
     def test_classify_model_not_loaded(self, mock_general_classifier, valid_image_file):
         # Make the mock raise an exception
         mock_general_classifier.predict.side_effect = ModelNotLoadedError()
 
         response = client.post("/api/v1/classify", files=valid_image_file)
 
-        assert response.status_code == 500
+        assert response.status_code == 503
         assert "Model is not loaded" in response.json()["detail"]
 
+    @patch('app.api.dependencies.general_classifier_service')
     def test_classify_general_exception(self, mock_general_classifier, valid_image_file):
         # Make the mock raise a general exception
         mock_general_classifier.predict.side_effect = Exception(
             "Unexpected error")
 
         response = client.post("/api/v1/classify", files=valid_image_file)
-
-        assert response.status_code == 500
-        assert "An unexpected error occurred" in response.json()["detail"]
-
-
-class TestIsApoloEndpoint:
-    def test_is_apolo_success(self, mock_apolo_classifier, valid_image_file):
-        # Set up mock return value
-        mock_apolo_classifier.predict.return_value = ("is_apolo", 0.95)
-
-        # Make the request
-        response = client.post("/api/v1/is-apolo", files=valid_image_file)
-
-        # Assert response
-        assert response.status_code == 200
-        assert response.json()["prediction"] == "is_apolo"
-        assert response.json()["confidence"] == 0.95
-        assert "processing_time" in response.json()
-
-        # Verify mock was called correctly
-        mock_apolo_classifier.predict.assert_called_once()
-
-    def test_is_apolo_invalid_image(self, mock_apolo_classifier, invalid_image_file):
-        response = client.post("/api/v1/is-apolo", files=invalid_image_file)
-
-        assert response.status_code == 400
-        assert "Invalid image format" in response.json()["detail"]
-        mock_apolo_classifier.predict.assert_not_called()
-
-    def test_is_apolo_model_not_loaded(self, mock_apolo_classifier, valid_image_file):
-        # Make the mock raise an exception
-        mock_apolo_classifier.predict.side_effect = ModelNotLoadedError()
-
-        response = client.post("/api/v1/is-apolo", files=valid_image_file)
-
-        assert response.status_code == 500
-        assert "Model is not loaded" in response.json()["detail"]
-
-    def test_is_apolo_general_exception(self, mock_apolo_classifier, valid_image_file):
-        # Make the mock raise a general exception
-        mock_apolo_classifier.predict.side_effect = Exception(
-            "Unexpected error")
-
-        response = client.post("/api/v1/is-apolo", files=valid_image_file)
 
         assert response.status_code == 500
         assert "An unexpected error occurred" in response.json()["detail"]

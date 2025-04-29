@@ -54,12 +54,12 @@ class TestGeneralClassifierService(unittest.TestCase):
         # Instead of mocking preprocess_image, let it process the real image
         # Configure mock model to return fake prediction results
         mock_result = MagicMock()
-        mock_result.shape = (1, 5)  # Assuming 5 classes
+        mock_result.shape = (1, 3)  # Assuming 3 classes
 
         # Create a mock prediction array representing class probabilities
         import numpy as np
         # Dog: 70%, Cat: 10%, etc.
-        mock_prediction = np.array([[0.7, 0.1, 0.1]])
+        mock_prediction = np.array([[0.7, 0.2, 0.1]])
         mock_model.predict.return_value = mock_prediction
 
         # Call predict and verify results
@@ -71,7 +71,7 @@ class TestGeneralClassifierService(unittest.TestCase):
         self.assertTrue(all(isinstance(v, float) for v in result.values()))
 
         # Check that we have the expected classes
-        expected_classes = ["dog", "cat", "car"]
+        expected_classes = ["dog", "cat", "other"]
         for cls in expected_classes:
             self.assertIn(cls, result)
 

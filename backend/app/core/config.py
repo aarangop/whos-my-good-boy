@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     JSON_LOGS: bool = os.getenv("JSON_LOGS", "").lower() == "true"
 
+    ENV: str = os.getenv("env", "development")
+
     model_config = ConfigDict(
         extra='allow',
         env_file=".env",

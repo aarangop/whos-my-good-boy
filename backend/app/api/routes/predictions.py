@@ -1,9 +1,7 @@
 import time
-from io import BytesIO
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, File, UploadFile
 from loguru import logger
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from app.api.dependencies import (
     get_general_classifier_service,
@@ -11,7 +9,6 @@ from app.api.dependencies import (
 )
 from app.core.errors import InvalidImageError, ModelNotLoadedError, invalid_image_exception, model_not_loaded_exception, general_error_exception, validation_error_exception
 from app.models.schemas import ClassificationResponse, DetailedClassificationResponse
-from app.services.base import BaseClassifierService
 from app.services.general_classifier import GeneralClassifierService
 from app.services.apolo_classifier import ApoloClassifierService
 
@@ -32,7 +29,7 @@ async def classify_image(
 
         # Validate image
         if not image.content_type in ["image/jpeg", "image/png"]:
-            raise invalid_image_exception()
+            raise InvalidImageError()
 
         # Process image and get predictions
         predictions = service.predict(image_data)
@@ -59,7 +56,7 @@ async def classify_image(
         logger.info(str(e))
         raise validation_error_exception(e)
     except Exception as e:
-        raise general_error_exception()
+        raise general_error_exception(e)
 
 
 @router.post("/is-apolo", response_model=ClassificationResponse)

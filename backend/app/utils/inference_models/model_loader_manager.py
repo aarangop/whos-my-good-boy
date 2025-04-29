@@ -1,5 +1,5 @@
 import os
-
+from app.core.config import settings
 from app.utils.inference_models.model_loader import LocalModelLoader
 
 
@@ -10,7 +10,7 @@ class ModelLoaderManager:
     @classmethod
     def get_loader(cls):
 
-        env = os.environ.get('ENVIRONMENT', 'development')
+        env = settings.ENV
 
         if cls._loader is not None:
             return cls._loader

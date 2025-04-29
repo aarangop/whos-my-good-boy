@@ -20,6 +20,7 @@ class GeneralClassifierService(BaseClassifierService):
         self.model_loader = ModelLoaderManager.get_loader()
         self.model = self.model_loader.load(self.model_filename)
         self.model_processor = MobileNetProcessor()
+        self.pred_classes = ['cat', 'dog', 'other']
 
     def predict(self, image_data: bytes) -> Dict[str, float]:
         """
@@ -44,11 +45,7 @@ class GeneralClassifierService(BaseClassifierService):
         pred = self.model.predict(preprocessed_image)
         # For the placeholder implementation, return random classification results
         # This will be replaced with actual model inference when we add TensorFlow
-        classes = ['cat', 'dog', 'other']
         decoded_preds = {class_name: pred[0][i]
-                         for i, class_name in enumerate(classes)}
-        # Normalize to ensure probabilities sum to 1
-        total = np.sum(pred, axis=1)
-        assert total == 1
+                         for i, class_name in enumerate(self.pred_classes)}
 
         return decoded_preds

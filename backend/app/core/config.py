@@ -2,6 +2,7 @@
 
 import os
 from typing import List
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -9,7 +10,6 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000", "https://localhost:3000"]
-    MODEL_PATH: str = os.getenv("MODEL_PATH", "./models")
 
     # S3 Configuration (for future use)
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
@@ -18,9 +18,14 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: str = os.getenv(
         "S3_BUCKET_NAME", "whos-my-good-boy-models")
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    JSON_LOGS: bool = os.getenv("JSON_LOGS", "").lower() == "true"
+
+    model_config = ConfigDict(
+        extra='allow',
+        env_file=".env",
+        case_sensitive=True
+    )
 
 
 settings = Settings()

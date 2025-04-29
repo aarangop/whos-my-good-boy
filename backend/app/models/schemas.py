@@ -17,8 +17,13 @@ class ClassificationResponse(BaseModel):
     processing_time: float
 
 
+class PredictionItem(BaseModel):
+    class_name: str
+    probability: float
+
+
 class DetailedClassificationResponse(BaseModel):
-    predictions: List[Dict[str, float]]
+    predictions: List[PredictionItem]
     top_prediction: str
     processing_time: float
 

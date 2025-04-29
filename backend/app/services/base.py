@@ -3,7 +3,8 @@ from typing import Dict, Tuple, Any, Union
 from io import BytesIO
 from PIL import Image
 
-from app.core.errors import InvalidImageError, ModelNotLoadedError
+from app.core.errors import InvalidImageError
+from app.utils.inference_models.preprocessor import InputPreprocessor
 
 
 class BaseClassifierService(ABC):
@@ -12,6 +13,7 @@ class BaseClassifierService(ABC):
     def __init__(self):
         self.model = None
         self.model_loaded = False
+        self.model_path = None
 
     def load_model(self):
         """Load model from local file or S3 (placeholder)"""
@@ -42,6 +44,7 @@ class BaseClassifierService(ABC):
             img = img.resize((224, 224))
 
             # In real implementation, we would convert to numpy array or tensor
+
             return img
         except Exception as e:
             raise InvalidImageError(f"Failed to process image: {str(e)}")

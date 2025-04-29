@@ -1,8 +1,13 @@
 import random
 from typing import Dict
+import os
+
+import numpy as np
 
 from app.services.base import BaseClassifierService
 from app.core.errors import ModelNotLoadedError
+from app.utils.inference_models.mobilenet_preprocessor import MobileNetProcessor
+from app.utils.inference_models.model_loader_manager import ModelLoaderManager
 
 
 class GeneralClassifierService(BaseClassifierService):
@@ -10,7 +15,11 @@ class GeneralClassifierService(BaseClassifierService):
 
     def __init__(self):
         super().__init__()
-        self.load_model()
+
+        self.model_filename = os.getenv("CAT_DOG_OTHER_CLASSIFIER")
+        self.model_loader = ModelLoaderManager.get_loader()
+        self.model = self.model_loader.load(self.model_filename)
+        self.model_processor = MobileNetProcessor()
 
     def predict(self, image_data: bytes) -> Dict[str, float]:
         """
@@ -26,24 +35,20 @@ class GeneralClassifierService(BaseClassifierService):
             ModelNotLoadedError: If the model is not loaded
             InvalidImageError: If the image cannot be processed
         """
-        if not self.model_loaded:
+        if self.model is None:
             raise ModelNotLoadedError("General classifier model not loaded")
 
         # Preprocess the image
-        processed_image = self.preprocess_image(image_data)
+        preprocessed_image = self.model_processor.preprocess_input(image_data)
 
+        pred = self.model.predict(preprocessed_image)
         # For the placeholder implementation, return random classification results
         # This will be replaced with actual model inference when we add TensorFlow
-        mock_classes = {
-            "dog": random.uniform(0.1, 0.9),
-            "cat": random.uniform(0.1, 0.5),
-            "car": random.uniform(0.0, 0.3),
-            "tree": random.uniform(0.0, 0.2),
-            "person": random.uniform(0.0, 0.4)
-        }
-
+        classes = ['cat', 'dog', 'other']
+        decoded_preds = {class_name: pred[0][i]
+                         for i, class_name in enumerate(classes)}
         # Normalize to ensure probabilities sum to 1
-        total = sum(mock_classes.values())
-        mock_classes = {k: v/total for k, v in mock_classes.items()}
+        total = np.sum(pred, axis=1)
+        assert total == 1
 
-        return mock_classes
+        return decoded_preds

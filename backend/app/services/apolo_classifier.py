@@ -3,6 +3,7 @@ import random
 
 from app.services.base import BaseClassifierService
 from app.core.errors import ModelNotLoadedError
+from app.utils.inference_models.mobilenet_preprocessor import MobileNetProcessor
 
 
 class ApoloClassifierService(BaseClassifierService):

@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from pydantic import ValidationError
 
 
 class ImageProcessingError(Exception):
@@ -55,4 +56,12 @@ def general_error_exception():
     return HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail="An unexpected error occurred. Please try again later."
+    )
+
+
+def validation_error_exception(e: ValidationError):
+    errors = "\n".join(e.errors(include_context=True))
+    return HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=errors
     )

@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import health, predictions
-from app.core.config import settings
+from app.core.config import config
 from app.core.logging import setup_logging
 
 app = FastAPI(
@@ -18,14 +18,14 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=config.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Configure logging with settings
-setup_logging(log_level=settings.LOG_LEVEL, json_logs=settings.JSON_LOGS)
+setup_logging(log_level=config.LOG_LEVEL, json_logs=config.JSON_LOGS)
 
 
 @app.middleware("http")

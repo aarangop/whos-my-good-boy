@@ -7,12 +7,12 @@ from app.utils.inference_models.model_loader_manager import ModelLoaderManager
 
 class TestModelLoaderManager:
 
-    @patch("app.utils.inference_models.model_loader_manager.settings")
+    @patch("app.utils.inference_models.model_loader_manager.config")
     @patch('app.utils.inference_models.model_loader_manager.os.getenv')
-    def test_get_loader_development_environment(self, mock_getenv, mock_settings):
-        """Test getting loader in development environment"""
+    def test_get_loader_development_environment(self, mock_getenv, mock_config):
+        """Test getting loader for local model"""
         # Arrange
-        mock_settings.ENV = "development"
+        mock_config.MODEL_SOURCE = "local"
         mock_getenv.side_effect = lambda key, default=None: {
             "MODELS_DIR": "tests/test_data/models"
         }.get(key, default)
@@ -32,24 +32,25 @@ class TestModelLoaderManager:
             mock_loader.assert_called_once_with("tests/test_data/models")
             assert loader == mock_instance
 
-    @patch("app.utils.inference_models.model_loader_manager.settings")
-    def test_get_loader_non_development_environment(self, mock_settings):
-        """Test that getting loader in non-development environment raises exception"""
+    @patch("app.utils.inference_models.model_loader_manager.S3ModelLoader")
+    @patch("app.utils.inference_models.model_loader_manager.config")
+    def test_get_loader_from_s3(self, mock_config, mock_s3_model_loader):
+        """Test that getting an s3 model loader"""
         # Arrange
-        mock_settings.ENV = "production"
+        mock_config.MODEL_SOURCE = "s3"
+        mock_s3_model_loader.return_value = MagicMock()
 
         # Reset the singleton instance
         ModelLoaderManager._loader = None
 
         # Act & Assert
-        with pytest.raises(NotImplementedError, match="Loader for production not implemented"):
-            ModelLoaderManager.get_loader()
+        ModelLoaderManager.get_loader()
 
-    @patch("app.utils.inference_models.model_loader_manager.settings")
-    def test_get_loader_singleton_pattern(self, mock_settings):
+    @patch("app.utils.inference_models.model_loader_manager.config")
+    def test_get_loader_singleton_pattern(self, mock_config):
         """Test that get_loader returns the same instance when called multiple times"""
         # Arrange
-        mock_settings.ENV = 'development'
+        mock_config.MODEL_SOURCE = 'local'
 
         with patch('app.utils.inference_models.model_loader_manager.LocalModelLoader') as mock_loader:
             # Create a mock instance

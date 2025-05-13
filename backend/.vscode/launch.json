@@ -11,6 +11,30 @@
       "module": "uvicorn",
       "args": ["app.main:app", "--reload"],
       "jinja": true
+    },
+    {
+      "name": "Unit Tests Only",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-v", "-m", "not integration"],
+      "justMyCode": true
+    },
+    {
+      "name": "Integration Tests Only",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-v", "-m", "integration"],
+      "justMyCode": true
+    },
+    {
+      "name": "All Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-v"],
+      "justMyCode": true
     }
   ]
 }

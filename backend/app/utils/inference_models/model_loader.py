@@ -151,9 +151,14 @@ class S3ModelLoader(ModelLoader):
         if model_name in self.models:
             return self.models[model_name]
 
+        # Check environment variable for model source
+        env = config.ENV
+
+        prefix = f"{env}/{model_name}"
+
         # Get list of objects in the S3 bucket
         objects = self._client.list_objects_v2(
-            Bucket=self._bucket, Prefix=model_name
+            Bucket=self._bucket, Prefix=prefix
         )
 
         if 'Contents' not in objects:

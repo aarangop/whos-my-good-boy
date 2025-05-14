@@ -18,7 +18,7 @@ class ModelLoaderManager:
             return cls._loader
 
         if model_source == 'local':
-            models_dir = os.getenv("MODELS_DIR")
+            models_dir = config.MODELS_DIR
             cls._loader = LocalModelLoader(models_dir)
             return cls._loader
 

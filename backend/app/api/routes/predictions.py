@@ -91,4 +91,4 @@ async def is_apolo(
     except ModelNotLoadedError:
         raise model_not_loaded_exception()
     except Exception as e:
-        raise general_error_exception()
+        raise general_error_exception(e)

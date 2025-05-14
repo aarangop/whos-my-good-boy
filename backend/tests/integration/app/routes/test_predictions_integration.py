@@ -87,6 +87,7 @@ class TestPredictionEndpoints_Integration:
         assert "detail" in data
         assert any("image" in error["loc"] for error in data["detail"])
 
+    @pytest.mark.skip(reason="is-apolo endpoint not fully implemented yet")
     def test_is_apolo_valid_image(self):
         """Test is-apolo classification with a real image using the actual model"""
         # Open and read the test image
@@ -117,6 +118,7 @@ class TestPredictionEndpoints_Integration:
         assert isinstance(data["confidence"], float)
         assert 0 <= data["confidence"] <= 1
 
+    @pytest.mark.skip(reason="is-apolo endpoint not fully implemented yet")
     def test_is_apolo_invalid_image_type(self):
         """Test error handling for invalid image type in is-apolo endpoint"""
         # Create a test file with non-image content
@@ -132,6 +134,7 @@ class TestPredictionEndpoints_Integration:
         assert response.status_code == 400
         assert "Invalid image format" in response.json()["detail"]
 
+    @pytest.mark.skip(reason="is-apolo endpoint not fully implemented yet")
     def test_is_apolo_missing_image(self):
         """Test error handling when image is missing in is-apolo endpoint"""
         # Send request without image

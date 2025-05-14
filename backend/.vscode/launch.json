@@ -5,36 +5,52 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FastAPI",
+      "name": "Debug Current Test File",
       "type": "debugpy",
       "request": "launch",
-      "module": "uvicorn",
-      "args": ["app.main:app", "--reload"],
-      "jinja": true
+      "purpose": ["debug-test"],
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
     },
     {
-      "name": "Unit Tests Only",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "pytest",
-      "args": ["-v", "-m", "not integration"],
-      "justMyCode": true
-    },
-    {
-      "name": "Integration Tests Only",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "pytest",
-      "args": ["-v", "-m", "integration"],
-      "justMyCode": true
-    },
-    {
-      "name": "All Tests",
+      "name": "Debug All Tests",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
       "args": ["-v"],
-      "justMyCode": true
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Debug Unit Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-k", "\"not integration\"", "-v"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Debug Integration Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-m", "integration", "-v"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
     }
   ]
 }

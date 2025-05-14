@@ -60,7 +60,9 @@ async def logging_middleware(request: Request, call_next):
 
 # Include routers
 app.include_router(health.router)
-app.include_router(predictions.router, prefix="/api/v1")
+app.include_router(predictions.router,
+                   prefix=f"/api/{config.API_VERSION}",
+                   tags=["predictions"])
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,35 +1,32 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "whos-my-good-boy"
 version = "0.1.0"
 description = "A FastAPI application for image classification using fine-tuned TensorFlow models."
-authors = [
-    {name = "Andrés Arango Pérez", email = "andresap@proton.me"}
-]
-requires-python = ">=3.9"
-dependencies = [
-    "fastapi>=0.115.12",
-    "uvicorn[standard]>=0.34.2",
-    "pydantic>=2.11.4",
-    "loguru>=0.7.3",
-    "tensorflow>=2.19.0",
-    "pillow>=11.2.1",
-    "boto3>=1.38.14",
-    "python-multipart>=0.0.20",
-]
+authors = ["Andrés Arango Pérez <andresap@proton.me>"]
+readme = "README.md"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.3.5",
-    "pytest-cov>=6.1.1",
-    "black>=25.1.0",
-    "isort>=6.0.1",
-    "mypy>=1.15.0",
-    "moto>=5.1.4", 
-]
+[tool.poetry.dependencies]
+python = ">=3.9"
+fastapi = ">=0.115.12"
+uvicorn = {extras = ["standard"], version = ">=0.34.2"}
+pydantic = ">=2.11.4"
+loguru = ">=0.7.3"
+tensorflow = ">=2.19.0"
+pillow = ">=11.2.1"
+boto3 = ">=1.38.14"
+python-multipart = ">=0.0.20"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.3.5"
+pytest-cov = ">=6.1.1"
+black = ">=25.1.0"
+isort = ">=6.0.1"
+mypy = ">=1.15.0"
+moto = ">=5.1.4"
 
 [tool.pytest.ini_options]
 markers = [

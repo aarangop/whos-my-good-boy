@@ -5,7 +5,12 @@ from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
-    API_V1_STR: str = "/api/v1"
+    # Environment
+    ENV: str = os.getenv("env", "development")
+
+    # API Configuration
+    API_VERSION: str = os.getenv("API_VERSION", "v1")
+    API_PREFIX: str = f"/api/{API_VERSION}"
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000", "https://localhost:3000"]
 
@@ -14,13 +19,12 @@ class Config(BaseSettings):
     S3_MODELS_BUCKET: str = os.getenv(
         "S3_MODELS_BUCKET", "whos-my-good-boy-models")
 
+    # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     JSON_LOGS: bool = os.getenv("JSON_LOGS", "").lower() == "true"
 
-    ENV: str = os.getenv("env", "development")
-
+    # Model Configuration
     MODEL_SOURCE: str = os.getenv("MODEL_SOURCE", "local")
-
     MODELS_DIR: str = os.getenv("MODELS_DIR", "./models")
 
     model_config = ConfigDict(

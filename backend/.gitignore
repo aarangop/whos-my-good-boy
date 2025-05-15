@@ -2,7 +2,7 @@
 models/
 
 # Docker environment file
-.docker.env
+*.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

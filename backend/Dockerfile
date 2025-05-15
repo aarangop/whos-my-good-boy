@@ -23,11 +23,13 @@ RUN poetry config installer.max-workers 10
 
 # Copy application code
 COPY app /app/app
+# Copy test directory for CI
+COPY tests /app/tests
 # Copy any model files if they exist
 COPY models/ /app/models/
 
-# Install dependencies without dev dependencies (this will use the existing lock file)
-RUN poetry install --without dev --no-interaction --no-ansi
+# Install all dependencies including dev for testing (this will use the existing lock file)
+RUN poetry install --no-interaction --no-ansi
 
 # Set environment variables
 # These will be overridden by values passed at runtime

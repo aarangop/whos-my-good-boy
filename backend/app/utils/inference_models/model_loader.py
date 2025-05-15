@@ -149,21 +149,42 @@ class S3ModelLoader(ModelLoader):
             f"Loading model '{model_name}' from S3 bucket '{self._bucket}'")
 
         if model_name in self.models:
+            logger.debug(f"Model '{model_name}' already loaded in memory, returning cached version")
             return self.models[model_name]
 
         # Check environment variable for model source
         env = config.ENV
+        logger.debug(f"Environment: {env}")
 
         prefix = f"{env}/{model_name}"
+        logger.debug(f"Looking for models with prefix: '{prefix}'")
 
         # Get list of objects in the S3 bucket
-        objects = self._client.list_objects_v2(
-            Bucket=self._bucket, Prefix=prefix
-        )
+        try:
+            objects = self._client.list_objects_v2(
+                Bucket=self._bucket, Prefix=prefix
+            )
+            logger.debug(f"S3 response: {objects}")
+        except Exception as e:
+            logger.error(f"Error listing objects in S3: {e}")
+            raise
 
         if 'Contents' not in objects:
+            logger.error(f"No objects found with prefix '{prefix}' in bucket '{self._bucket}'")
+            
+            # Try listing the bucket contents without prefix to see what's available
+            try:
+                all_objects = self._client.list_objects_v2(Bucket=self._bucket)
+                if 'Contents' in all_objects:
+                    keys = [obj['Key'] for obj in all_objects['Contents']]
+                    logger.debug(f"Available objects in bucket: {keys}")
+            except Exception as e:
+                logger.error(f"Error listing all objects in bucket: {e}")
+                
             raise FileNotFoundError(
                 f"Model '{model_name}' not found in S3 bucket '{self._bucket}'")
+            
+        logger.debug(f"Found {len(objects['Contents'])} objects with prefix '{prefix}'")
 
         if version == 'latest':
             model_path = self._get_latest_model_version_path(

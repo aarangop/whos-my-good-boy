@@ -1,6 +1,9 @@
 # Models folder for downloaded models
 models/
 
+# Docker environment file
+.docker.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

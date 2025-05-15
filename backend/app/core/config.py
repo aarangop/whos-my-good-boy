@@ -13,6 +13,7 @@ class Config(BaseSettings):
     API_PREFIX: str = f"/api/{API_VERSION}"
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000", "https://localhost:3000"]
+    PORT: int = int(os.getenv("PORT", 8000))
 
     # S3 Configuration
     AWS_REGION: str = os.getenv("AWS_REGION", "us-east-2")
@@ -26,6 +27,7 @@ class Config(BaseSettings):
     # Model Configuration
     MODEL_SOURCE: str = os.getenv("MODEL_SOURCE", "local")
     MODELS_DIR: str = os.getenv("MODELS_DIR", "./models")
+    CAT_DOG_OTHER_CLASSIFIER: str = os.getenv("CAT_DOG_OTHER_CLASSIFIER", "cat_dog_other_classifier.h5")
 
     model_config = ConfigDict(
         extra='allow',

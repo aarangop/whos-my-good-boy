@@ -9,6 +9,14 @@ from app.api.routes import health, predictions
 from app.core.config import config
 from app.core.logging import setup_logging
 
+logger.info("Starting FastAPI application...")
+logger.info(f"Environment: {config.ENV}")
+logger.info(f"API Version: {config.API_VERSION}")
+logger.info(f"Model Source: {config.MODEL_SOURCE}")
+logger.info(f"Models Directory: {config.MODELS_DIR}")
+logger.info(f"Cat-dog-other classifier: {config.CAT_DOG_OTHER_CLASSIFIER}")
+logger.info(f"Log Level: {config.LOG_LEVEL}")
+
 app = FastAPI(
     title="Who's My Good Boy API",
     description="AI service for image classification",
@@ -65,7 +73,7 @@ app.include_router(predictions.router,
                    tags=["predictions"])
 
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=config.PORT, reload=True)
 
 # To run this application from the command line:
 # If you are in the backend directory:

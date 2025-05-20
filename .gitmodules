@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/aarangop/wmgb-backend.git
+[submodule "infrastructure"]
+	path = infrastructure
+	url = https://github.com/aarangop/wmgb-infrastructure
